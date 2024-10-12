@@ -21,7 +21,8 @@ class InputController: IMKInputController {
     private var isSuggesting = false;
     private var isLatexOnly = false;
     private var suggestionInput = "";
-
+    private var lastCharacter: Character? = nil;
+    
     private let nonLatexSuggestionsList: Dictionary<String, String> = [
         "happy": "😀",
         "sad": "😢",
@@ -73,6 +74,7 @@ class InputController: IMKInputController {
         insertText(text: candidateString.string)
         candidates.hide()
         stopSuggesting()
+        lastCharacter = Character(" ")
     }
 
     override func candidateSelectionChanged(_ candidateString: NSAttributedString) {
@@ -101,12 +103,14 @@ class InputController: IMKInputController {
                     insertText(text: nonLatexResult)
                     stopSuggesting()
                     candidates.hide()
+                    lastCharacter = Character(" ")
                     return true
                 }
                 if let latexResult = latexResult {
                     insertText(text: latexResult)
                     stopSuggesting()
                     candidates.hide()
+                    lastCharacter = Character(" ")
                     return true
                 }
                 insertText(text: ":" + suggestionInput + ":")
@@ -114,10 +118,20 @@ class InputController: IMKInputController {
                 candidates.hide()
                 return true
             }
-            startSuggestionInput(isLatexOnly: false)
-            candidates.update()
-            candidates.show()
-            return true
+            if let lastCharacter = lastCharacter {
+                if lastCharacter.isWhitespace {
+                    startSuggestionInput(isLatexOnly: false)
+                    candidates.update()
+                    candidates.show()
+                    return true
+                }
+            } else {
+                startSuggestionInput(isLatexOnly: false)
+                candidates.update()
+                candidates.show()
+                return true
+            }
+            return false
         }
         if event.characters == "\\" {
             startSuggestionInput(isLatexOnly: true)
@@ -160,6 +174,9 @@ class InputController: IMKInputController {
         }
 
         if let chars = event.characters {
+            if chars.count != 0 {
+                lastCharacter = chars.last!
+            }
             if isSuggesting {
                 suggestionInput += chars
             } else {
