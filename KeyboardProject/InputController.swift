@@ -1,6 +1,10 @@
 import Cocoa
 import InputMethodKit
 
+func removeDupes(arr: [String]) -> [String] {
+    return NSOrderedSet(array: arr).map({ $0 as! String })
+}
+
 @objc(InputController)
 class InputController: IMKInputController {
     private let candidates: IMKCandidates
@@ -17,7 +21,7 @@ class InputController: IMKInputController {
     private var isSuggesting = false;
     private var isLatexOnly = false;
     private var suggestionInput = "";
-    
+
     private let nonLatexSuggestionsList: Dictionary<String, String> = [
         "happy": "😀",
         "sad": "😢",
@@ -32,8 +36,7 @@ class InputController: IMKInputController {
         "alveolar plosive": "t",
         "alveolar approximant": "ɹ"
     ]
-    
-    
+
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
         let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         guard let clientUnwrapped = inputClient as? IMKTextInput else {
@@ -47,14 +50,13 @@ class InputController: IMKInputController {
         
         super.init(server: server, delegate: delegate, client: inputClient)
     }
-    
 
     override func candidates(_ sender: Any) -> [Any] {
         if suggestionInput.isEmpty {
             if isLatexOnly {
-                return InputController.removeDupes(arr: Array(latexSuggestionsList.values))
+                return removeDupes(arr: Array(latexSuggestionsList.values))
             }
-            return InputController.removeDupes(arr: Array(nonLatexSuggestionsList.values) + Array(latexSuggestionsList.values))
+            return removeDupes(arr: Array(nonLatexSuggestionsList.values) + Array(latexSuggestionsList.values))
         }
         var filtered = Array(latexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
         if !isLatexOnly {
@@ -64,7 +66,7 @@ class InputController: IMKInputController {
         } else {
             filtered.append("\\" + suggestionInput)
         }
-        return InputController.removeDupes(arr: filtered)
+        return removeDupes(arr: filtered)
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
@@ -76,13 +78,13 @@ class InputController: IMKInputController {
     override func candidateSelectionChanged(_ candidateString: NSAttributedString) {
         NSLog("%@", "\(#function)")
     }
-    
+
     private func startSuggestionInput(isLatexOnly: Bool) {
         isSuggesting = true;
         self.isLatexOnly = isLatexOnly;
         suggestionInput = "";
     }
-    
+
     private func stopSuggesting() {
         isSuggesting = false;
         isLatexOnly = false;
@@ -94,7 +96,7 @@ class InputController: IMKInputController {
             if isSuggesting && candidates.isVisible() {
                 let nonLatexResult = nonLatexSuggestionsList[suggestionInput]
                 let latexResult = latexSuggestionsList[suggestionInput]
-                
+
                 if let nonLatexResult = nonLatexResult {
                     insertText(text: nonLatexResult)
                     stopSuggesting()
@@ -146,7 +148,7 @@ class InputController: IMKInputController {
             }
             return false
         }
-        
+
         // The return value is whether the system interprets the keystroke with default behavior
         // If the event had no associated character, i.e. arrow keys, let the system do its thing
         // If the event was a character that should be typed, consume it
@@ -156,8 +158,7 @@ class InputController: IMKInputController {
             }
             return false
         }
-        
-        
+
         if let chars = event.characters {
             if isSuggesting {
                 suggestionInput += chars
@@ -165,11 +166,11 @@ class InputController: IMKInputController {
                 insertText(text: chars)
             }
         }
-        
+
         candidates.update()
         return true
     }
-    
+
     func onSuggestionDismiss() {
         if isLatexOnly {
             insertText(text: "\\" + suggestionInput)
@@ -179,12 +180,8 @@ class InputController: IMKInputController {
         stopSuggesting()
         candidates.hide()
     }
-    
+
     func insertText(text: String) {
         client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
-    }
-    
-    static func removeDupes(arr: [String]) -> [String] {
-        return NSOrderedSet(array: arr).map({ $0 as! String })
     }
 }
