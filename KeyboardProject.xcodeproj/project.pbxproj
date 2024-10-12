@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68243A1A2CBA2A6300A8704F /* InputCandidates.swift */; };
 		D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */; };
 		D6DB7EC22CBA1F9C0042CA6B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */; };
 		D6DB7EC32CBA1F9C0042CA6B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EBA2CBA1F9C0042CA6B /* Assets.xcassets */; };
@@ -36,6 +37,7 @@
 		1A41E61426E745D9009B65D7 /* KeyboardProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyboardProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A41E62426E745DD009B65D7 /* IMKitSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A41E62E26E745DD009B65D7 /* IMKitSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		68243A1A2CBA2A6300A8704F /* InputCandidates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCandidates.swift; sourceTree = "<group>"; };
 		D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D6DB7EBA2CBA1F9C0042CA6B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				D6DB7EBD2CBA1F9C0042CA6B /* InputController.swift */,
 				D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */,
 				D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */,
+				68243A1A2CBA2A6300A8704F /* InputCandidates.swift */,
 			);
 			path = KeyboardProject;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6DB7EC52CBA1F9C0042CA6B /* InputController.swift in Sources */,
+				68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */,
 				D6DB7EC22CBA1F9C0042CA6B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,12 +410,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = KeyboardProject/KeyboardProject.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeyboardProject/Preview Content\"";
-				DEVELOPMENT_TEAM = MD6SEJ69J5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -439,12 +443,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = KeyboardProject/KeyboardProject.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeyboardProject/Preview Content\"";
-				DEVELOPMENT_TEAM = MD6SEJ69J5;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -460,6 +464,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.yalecomputersociety.inputmethod.KeyboardProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
