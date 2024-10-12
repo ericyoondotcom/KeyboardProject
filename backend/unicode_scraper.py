@@ -1,43 +1,56 @@
 import requests
 import emoji
-import csv
-import unicodedata
-from bs4 import BeautifulSoup
+import pandas as pd
 import json
 from urllib.parse import urlencode, quote_plus
+import signal
+import sys
+from pathlib import Path
+from tqdm import tqdm
 
 # Get all emojis
 all_emojis = emoji.EMOJI_DATA.keys()
 
-DATA = {}
-with open('emoji.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        DATA[row[0]] = row[1]
+if Path("emoji.csv").is_file():
+    data = pd.read_csv("emoji.csv")
+    existing = data["code"].values
+else:
+    data = pd.DataFrame()
+    existing = []
 
-with open('emoji.csv', 'a') as file:
-    for emj in all_emojis:
-        if emj in DATA:
-            continue
+# Listen for Ctrl+C and save
+def signal_handler(sig, frame):
+    data.to_csv("emoji.csv", index=False)
+    sys.exit(0)
 
-        url = 'https://emojipedia.org/_next/data/RtZJ6YpCnD_sMD32txwi4/en/search.json'
-        payload = {'q': emj}
 
-        try:
-            params = urlencode(payload, quote_via=quote_plus)
-            # Send POST request with payload
-            response = requests.get(url, params)
+signal.signal(signal.SIGINT, signal_handler)
 
-            data = json.loads(response.text)
-            redirect = data['pageProps']['__N_REDIRECT']
+for emj in tqdm(all_emojis):
+    if emj in existing:
+        continue
 
-            emoji_page = f'https://emojipedia.org{redirect}'
-            response = requests.get(emoji_page)
-            soup = BeautifulSoup(response.content, "html.parser")
-            div = soup.find("div", class_='HtmlContent_html-content-container__Ow2Bk')
-            file.write(f'{emj},"{div.find('p').get_text(strip=True).replace('\u00A0', ' ')}"\n')
-        except Exception as e:
-            print('failed to get description for', emj, e)
+    url = "https://emojipedia.org/_next/data/RtZJ6YpCnD_sMD32txwi4/en/search.json"
+    payload = {"q": emj}
 
-print("Done!")
+    try:
+        params = urlencode(payload, quote_via=quote_plus)
+        response = requests.get(url, params)
+        redirect = json.loads(response.text)["pageProps"]["__N_REDIRECT"]
 
+        emoji_page = f"https://emojipedia.org/_next/data/RtZJ6YpCnD_sMD32txwi4/en/{redirect}.json?emoji={redirect}"
+        response = requests.get(emoji_page)
+        payload = json.loads(response.text)["pageProps"]["dehydratedState"]["queries"][
+            3
+        ]["state"]["data"]
+        payload = {k: v for k, v in payload.items() if k in ["id","title","code","slug","currentCldrName","codepointsHex","description","appleName","alsoKnownAs","shortcodes"]}
+        # Add missing fields to the data
+        data = data.reindex(data.columns.union(payload.keys(), sort=False), axis=1, fill_value=0)
+        for key in payload.keys():
+            if isinstance(payload[key], dict) or isinstance(payload[key], list):
+                payload[key] = json.dumps(payload[key])
+        data.loc[len(data)] = payload
+    except Exception as e:
+        tqdm.write(f"failed to get description for {emj} {str(e)}")
+
+data.to_csv("emoji.csv", index=False)
