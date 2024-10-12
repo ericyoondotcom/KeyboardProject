@@ -11,7 +11,7 @@ import InputMethodKit
 // Necessary to launch this app
 class NSManualApplication: NSApplication {
     private let appDelegate = AppDelegate()
-
+    
     override init() {
         super.init()
         self.delegate = appDelegate
@@ -28,10 +28,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var server = IMKServer()
     var candidatesWindow = IMKCandidates()
 
+    func candidates() -> [Any]! {
+        return ["foo", "bar", "baz"]
+    }
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Insert code here to initialize your application
         server = IMKServer(name: Bundle.main.infoDictionary?["InputMethodConnectionName"] as? String, bundleIdentifier: Bundle.main.bundleIdentifier)
-        candidatesWindow = IMKCandidates(server: server, panelType: kIMKSingleRowSteppingCandidatePanel, styleType: kIMKMain)
         NSLog("tried connection")
     }
 

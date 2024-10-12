@@ -259,7 +259,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "rm \nrm -rf \"/Library/Input Methods/KeyboardProject.*\"\nkillall KeyboardProject\nexit 0\n";
+			shellScript = "rm -rf \"/Library/Input Methods/KeyboardProject.*\"\nkillall KeyboardProject\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

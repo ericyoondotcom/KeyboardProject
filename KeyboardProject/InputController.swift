@@ -3,25 +3,48 @@ import InputMethodKit
 
 @objc(InputController)
 class InputController: IMKInputController {
-//    func candidates(for target: IMKTextInput) -> [Any]! {
-//        return ["Hello", "Bye"]
-//    }
+    private let candidates: IMKCandidates
+    private let client: IMKTextInput
+    
+    override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
+        let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
+        guard let clientUnwrapped = inputClient as? IMKTextInput else {
+            return nil
+        }
+        guard let candidatesUnwrapped = candidatesWrapped else {
+            return nil
+        }
+        self.candidates = candidatesUnwrapped
+        self.client = clientUnwrapped
+        
+        super.init(server: server, delegate: delegate, client: inputClient)
+    }
+    
+    override func candidates(_ sender: Any) -> [Any] {
+        return ["foo", "bar"]
+    }
 
+    override func candidateSelected(_ candidateString: NSAttributedString) {
+        client.insertText(candidateString.string, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+    }
+
+    override func candidateSelectionChanged(_ candidateString: NSAttributedString) {
+        NSLog("%@", "\(#function)")
+    }
+
+//    override func handle(_ event: NSEvent, client sender: Any) -> Bool {
+//        NSLog("%@", "\(#function)((\(event), client: \(sender))")
+//    }
+    
     override func inputText(_ string: String!, client sender: Any!) -> Bool {
         guard let client = sender as? IMKTextInput else {
             return false
         }
-        
-        client.insertText("3" + string, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+        if string == ":" {
+            candidates.update()
+            candidates.show()
+        }
+        client.insertText(string, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
         return true
     }
-    
-//    override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-//        let server = self.server()
-//        let candidates = IMKCandidates(server: server, panelType: kIMKMain)
-//        if let cand = candidates {
-//            cand.update()
-//        }
-//        return true
-//    }
 }
