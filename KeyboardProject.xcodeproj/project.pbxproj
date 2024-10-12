@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C1E8CF52CBB04D400CFEE6C /* latex_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */; };
+		3C1E8CF62CBB04D400CFEE6C /* latex_unicode.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */; };
+		3C1E8CF92CBB054100CFEE6C /* CSVLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF82CBB054100CFEE6C /* CSVLoader.swift */; };
+		3CDD09802CBAFF990036CE56 /* TrieSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDD097F2CBAFF990036CE56 /* TrieSwift.swift */; };
 		68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68243A1A2CBA2A6300A8704F /* InputCandidates.swift */; };
 		D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */; };
 		D6DB7EC22CBA1F9C0042CA6B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */; };
@@ -14,6 +18,7 @@
 		D6DB7EC52CBA1F9C0042CA6B /* InputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB7EBD2CBA1F9C0042CA6B /* InputController.swift */; };
 		D6DB7EC62CBA1F9C0042CA6B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */; };
 		D6DB7EC72CBA1F9C0042CA6B /* main.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */; };
+		D6DD7E072CBB1FF7005CAE8E /* emoji_transformed.csv in Resources */ = {isa = PBXBuildFile; fileRef = D6DD7E062CBB1FF7005CAE8E /* emoji_transformed.csv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +42,10 @@
 		1A41E61426E745D9009B65D7 /* KeyboardProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyboardProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A41E62426E745DD009B65D7 /* IMKitSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A41E62E26E745DD009B65D7 /* IMKitSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = latex_data.csv; sourceTree = "<group>"; };
+		3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = latex_unicode.csv; sourceTree = "<group>"; };
+		3C1E8CF82CBB054100CFEE6C /* CSVLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVLoader.swift; sourceTree = "<group>"; };
+		3CDD097F2CBAFF990036CE56 /* TrieSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrieSwift.swift; sourceTree = "<group>"; };
 		68243A1A2CBA2A6300A8704F /* InputCandidates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCandidates.swift; sourceTree = "<group>"; };
 		D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +54,7 @@
 		D6DB7EBD2CBA1F9C0042CA6B /* InputController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputController.swift; sourceTree = "<group>"; };
 		D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = main.tiff; sourceTree = "<group>"; };
+		D6DD7E062CBB1FF7005CAE8E /* emoji_transformed.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = emoji_transformed.csv; path = backend/emoji_transformed.csv; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +100,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3C1E8CF72CBB04E200CFEE6C /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				D6DD7E062CBB1FF7005CAE8E /* emoji_transformed.csv */,
+				3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */,
+				3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */,
+			);
+			path = assets;
+			sourceTree = "<group>";
+		};
 		D6DB7EB82CBA1F9C0042CA6B /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,7 +121,9 @@
 		D6DB7EC02CBA1F9C0042CA6B /* KeyboardProject */ = {
 			isa = PBXGroup;
 			children = (
+				3C1E8CF72CBB04E200CFEE6C /* assets */,
 				D6DB7EB82CBA1F9C0042CA6B /* Preview Content */,
+				3CDD097F2CBAFF990036CE56 /* TrieSwift.swift */,
 				D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */,
 				D6DB7EBA2CBA1F9C0042CA6B /* Assets.xcassets */,
 				D6DB7EBB2CBA1F9C0042CA6B /* KeyboardProject.entitlements */,
@@ -109,6 +131,7 @@
 				D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */,
 				D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */,
 				68243A1A2CBA2A6300A8704F /* InputCandidates.swift */,
+				3C1E8CF82CBB054100CFEE6C /* CSVLoader.swift */,
 			);
 			path = KeyboardProject;
 			sourceTree = "<group>";
@@ -218,8 +241,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6DD7E072CBB1FF7005CAE8E /* emoji_transformed.csv in Resources */,
 				D6DB7EC32CBA1F9C0042CA6B /* Assets.xcassets in Resources */,
 				D6DB7EC72CBA1F9C0042CA6B /* main.tiff in Resources */,
+				3C1E8CF52CBB04D400CFEE6C /* latex_data.csv in Resources */,
+				3C1E8CF62CBB04D400CFEE6C /* latex_unicode.csv in Resources */,
 				D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */,
 				D6DB7EC62CBA1F9C0042CA6B /* Info.plist in Resources */,
 			);
@@ -271,6 +297,8 @@
 				D6DB7EC52CBA1F9C0042CA6B /* InputController.swift in Sources */,
 				68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */,
 				D6DB7EC22CBA1F9C0042CA6B /* AppDelegate.swift in Sources */,
+				3C1E8CF92CBB054100CFEE6C /* CSVLoader.swift in Sources */,
+				3CDD09802CBAFF990036CE56 /* TrieSwift.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

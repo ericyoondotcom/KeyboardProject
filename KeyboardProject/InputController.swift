@@ -5,6 +5,10 @@ func removeDupes(arr: [String]) -> [String] {
     return NSOrderedSet(array: arr).map({ $0 as! String })
 }
 
+func removeDupes(arr: Dictionary<String, String>.Values) -> [String] {
+    return removeDupes(arr: Array(arr))
+}
+
 @objc(InputController)
 class InputController: IMKInputController {
     private let candidates: IMKCandidates
@@ -19,25 +23,16 @@ class InputController: IMKInputController {
         kVK_Delete,
     ]
     private var isSuggesting = false;
-    private var isLatexOnly = false;
+    private var isLatexOnly = false; // if the user invoked the popup with a backslash
     private var suggestionInput = "";
     private var lastCharacter: Character? = nil;
     
-    private let nonLatexSuggestionsList: Dictionary<String, String> = [
-        "happy": "😀",
-        "sad": "😢",
-        "hot": "🥵",
-        "cold": "🥶",
-    ]
-    private let latexSuggestionsList: Dictionary<String, String> = [
-        "phi": "ɸ",
-        "forall": "∀",
-        "lambda": "λ",
-        "dental fricative": "θ",
-        "alveolar plosive": "t",
-        "alveolar approximant": "ɹ"
-    ]
-
+    private var suggestionsLatexCanonical: Dictionary<String, String> = [:]
+    private var suggestionsLatexSemantic: Dictionary<String, String> = [:]
+    private var suggestionsEmojiCanonical: Dictionary<String, String> = [:]
+    private var suggestionsEmojiSemantic: Dictionary<String, String> = [:]
+    
+    
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
         let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         guard let clientUnwrapped = inputClient as? IMKTextInput else {
@@ -50,24 +45,89 @@ class InputController: IMKInputController {
         self.client = clientUnwrapped
         
         super.init(server: server, delegate: delegate, client: inputClient)
+        
+        
+        loadSuggestionArrays()
+    }
+    
+    func loadSuggestionArrays() {
+        let macroSymbols = CSVLoader.loadMacroSymbols(fileName: Bundle.main.url(forResource: "latex_unicode", withExtension: "csv")!.path)
+        let macroNicknames = CSVLoader.loadMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
+        guard let macroSymbols = macroSymbols else {
+            return
+        }
+        for key in macroSymbols.keys {
+            guard let symb = macroSymbols[key] else {
+                continue
+            }
+            let replaced = symb.replacingOccurrences(of: "\\", with: "", options: .literal, range: nil)
+            suggestionsLatexCanonical[key] = replaced
+        }
+        guard let macroNicknames = macroNicknames else {
+            return
+        }
+        for key in macroNicknames.keys {
+            let symbol = macroSymbols[String(key.dropFirst())]
+            guard let nicknamesList = macroNicknames[key] else {
+                continue
+            }
+            for nick_name in nicknamesList {
+                suggestionsLatexSemantic[nick_name.lowercased()] = symbol
+            }
+                    
+        }
+        
     }
 
     override func candidates(_ sender: Any) -> [Any] {
         if suggestionInput.isEmpty {
+            // Present EVERY suggestion to the user
             if isLatexOnly {
-                return removeDupes(arr: Array(latexSuggestionsList.values))
+                return ["\\"] + removeDupes(arr: Array(suggestionsLatexCanonical.values.prefix(10)))
             }
-            return removeDupes(arr: Array(nonLatexSuggestionsList.values) + Array(latexSuggestionsList.values))
+            return [":"] + removeDupes(arr: Array(suggestionsEmojiCanonical.values.prefix(10)))
         }
-        var filtered = Array(latexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
+        
+        var suggestions: [String] = []
+        suggestions.append(
+            (isLatexOnly ? "\\" : ":") +
+            suggestionInput
+        )
         if !isLatexOnly {
-            let nonLatexFiltered = Array(nonLatexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
-            filtered = nonLatexFiltered + filtered
-            filtered.append(":" + suggestionInput)
-        } else {
-            filtered.append("\\" + suggestionInput)
+            // If the user wants emojis, show them emojis
+            let filteredEmojiCanonical = filterWithLimit(dict: suggestionsEmojiCanonical, suggestionInput: suggestionInput)
+            let filteredEmojiSemantic = filterWithLimit(dict: suggestionsEmojiSemantic, suggestionInput: suggestionInput)
+        
+            suggestions = suggestions + filteredEmojiCanonical + filteredEmojiSemantic
         }
-        return removeDupes(arr: filtered)
+        
+        let filteredLatexCanonical = filterWithLimit(dict: suggestionsLatexCanonical, suggestionInput: suggestionInput)
+        let filteredLatexSemantic = filterWithLimit(dict: suggestionsLatexSemantic, suggestionInput: suggestionInput.lowercased())
+    
+        suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
+
+        // Finally, we need to add the default suggestion if
+        // the user just wants to type the plaintext and not
+        // invoke a macro.
+        
+        return removeDupes(arr: suggestions)
+    }
+    
+    private func filterWithLimit(dict: Dictionary<String, String>, suggestionInput: String) -> [String] {
+        var ret: [String] = []
+        var count = 0
+        for key in dict.keys {
+            if key.hasPrefix(suggestionInput) {
+                count += 1
+                if let val = dict[key] {
+                    ret.append(val)
+                }
+            }
+//            if count > 10 {
+//                break
+//            }
+        }
+        return ret
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
@@ -96,18 +156,19 @@ class InputController: IMKInputController {
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
         if event.characters == ":" && !isLatexOnly {
             if isSuggesting && candidates.isVisible() {
-                let nonLatexResult = nonLatexSuggestionsList[suggestionInput]
-                let latexResult = latexSuggestionsList[suggestionInput]
+                let semanticResult = suggestionsEmojiSemantic[suggestionInput]
+                let canonicalResult = suggestionsEmojiCanonical[suggestionInput]
 
-                if let nonLatexResult = nonLatexResult {
-                    insertText(text: nonLatexResult)
+                
+                if let canonicalResult = canonicalResult {
+                    insertText(text: canonicalResult)
                     stopSuggesting()
                     candidates.hide()
                     lastCharacter = Character(" ")
                     return true
                 }
-                if let latexResult = latexResult {
-                    insertText(text: latexResult)
+                if let semanticResult = semanticResult {
+                    insertText(text: semanticResult)
                     stopSuggesting()
                     candidates.hide()
                     lastCharacter = Character(" ")
