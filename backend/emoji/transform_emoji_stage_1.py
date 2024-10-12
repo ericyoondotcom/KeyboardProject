@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import emoji
 
-data = pd.read_csv("emojipedia_data.csv", keep_default_na=False)
+data = pd.read_csv("emoji_raw.csv", keep_default_na=False)
 
 
 def transform_row(row):
@@ -39,13 +39,13 @@ for code in emoji.EMOJI_DATA.keys():
             "cleaned_description": "; ".join(
                 [k.replace(":", "").replace("_", " ") for k in all_codes]
             ),
-            "all_codes": {
+            "all_codes": json.dumps({
                 "cldr": emoji.EMOJI_DATA[code]["en"],
                 **{
                     k: v
                     for k, v in enumerate(emoji.EMOJI_DATA[code].get("alias", []))
                 },
-            },
+            }),
         }
 
 data.to_csv("emoji_transformed.csv", index=False)

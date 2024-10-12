@@ -51,8 +51,8 @@ class InputController: IMKInputController {
     }
     
     func loadSuggestionArrays() {
-        let macroSymbols = CSVLoader.loadMacroSymbols(fileName: Bundle.main.url(forResource: "latex_unicode", withExtension: "csv")!.path)
-        let macroNicknames = CSVLoader.loadMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
+        let macroSymbols = CSVLoader.loadLatexMacroSymbols(fileName: Bundle.main.url(forResource: "latex_unicode", withExtension: "csv")!.path)
+        let macroNicknames = CSVLoader.loadLatexMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
         guard let macroSymbols = macroSymbols else {
             return
         }
@@ -77,6 +77,19 @@ class InputController: IMKInputController {
                     
         }
         
+        
+        let emojiShortcodes = CSVLoader.loadEmojiFromShortcodes(fileName: Bundle.main.url(forResource: "emoji_transformed_stage_2", withExtension: "csv")!.path)
+        guard let emojiShortcdes = emojiShortcdoes else {
+            return
+        }
+        for key in emojiShortcdes.keys {
+            guard let shortcodesList = emojiShortcdes[key] else {
+                continue
+            }
+            for shortcode in shortcodesList {
+                suggestionsEmojiCanonical[shortcode] = key
+            }
+        }
     }
 
     override func candidates(_ sender: Any) -> [Any] {
