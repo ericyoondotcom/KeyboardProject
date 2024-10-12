@@ -8,4 +8,7 @@
 5. RESTART YOUR MAC
 6. Go to System Settings -> Keyboard -> Input Sources -> Add -> English -> KeyboardProject
 
+## Reloading Without Restarting
+We initially thought that you have to restart your computer every time you make a change to the project.
 
+However, we modified the XCode build pipeline to add a Build Script phase, that runs `killall KeyboardProject`.

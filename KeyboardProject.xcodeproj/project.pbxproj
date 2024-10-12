@@ -120,6 +120,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A41E63826E745DD009B65D7 /* Build configuration list for PBXNativeTarget "KeyboardProject" */;
 			buildPhases = (
+				D610B0822CBA347200F8EC48 /* EY Run pre-build scripts */,
 				1A41E61026E745D9009B65D7 /* Sources */,
 				1A41E61126E745D9009B65D7 /* Frameworks */,
 				1A41E61226E745D9009B65D7 /* Resources */,
@@ -239,6 +240,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D610B0822CBA347200F8EC48 /* EY Run pre-build scripts */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "EY Run pre-build scripts";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "rm \nrm -rf \"/Library/Input Methods/KeyboardProject.*\"\nkillall KeyboardProject\nexit 0\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A41E61026E745D9009B65D7 /* Sources */ = {
