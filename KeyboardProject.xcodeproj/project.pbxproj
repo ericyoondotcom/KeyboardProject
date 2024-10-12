@@ -14,29 +14,11 @@
 		D6DB7EC52CBA1F9C0042CA6B /* InputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DB7EBD2CBA1F9C0042CA6B /* InputController.swift */; };
 		D6DB7EC62CBA1F9C0042CA6B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */; };
 		D6DB7EC72CBA1F9C0042CA6B /* main.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */; };
+		D6F68CC92CBAD7E90014E5A6 /* PythonLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F68CC82CBAD7E90014E5A6 /* PythonLink.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		1A41E62526E745DD009B65D7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A41E60C26E745D9009B65D7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1A41E61326E745D9009B65D7;
-			remoteInfo = IMKitSample;
-		};
-		1A41E62F26E745DD009B65D7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A41E60C26E745D9009B65D7 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1A41E61326E745D9009B65D7;
-			remoteInfo = IMKitSample;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1A41E61426E745D9009B65D7 /* KeyboardProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyboardProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A41E62426E745DD009B65D7 /* IMKitSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A41E62E26E745DD009B65D7 /* IMKitSampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IMKitSampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		68243A1A2CBA2A6300A8704F /* InputCandidates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCandidates.swift; sourceTree = "<group>"; };
 		D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D6DB7EB92CBA1F9C0042CA6B /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,24 +27,11 @@
 		D6DB7EBD2CBA1F9C0042CA6B /* InputController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputController.swift; sourceTree = "<group>"; };
 		D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = main.tiff; sourceTree = "<group>"; };
+		D6F68CC82CBAD7E90014E5A6 /* PythonLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PythonLink.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1A41E61126E745D9009B65D7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62126E745DD009B65D7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62B26E745DD009B65D7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -84,8 +53,6 @@
 			isa = PBXGroup;
 			children = (
 				1A41E61426E745D9009B65D7 /* KeyboardProject.app */,
-				1A41E62426E745DD009B65D7 /* IMKitSampleTests.xctest */,
-				1A41E62E26E745DD009B65D7 /* IMKitSampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,6 +76,7 @@
 				D6DB7EBE2CBA1F9C0042CA6B /* Info.plist */,
 				D6DB7EBF2CBA1F9C0042CA6B /* main.tiff */,
 				68243A1A2CBA2A6300A8704F /* InputCandidates.swift */,
+				D6F68CC82CBAD7E90014E5A6 /* PythonLink.swift */,
 			);
 			path = KeyboardProject;
 			sourceTree = "<group>";
@@ -134,42 +102,6 @@
 			productReference = 1A41E61426E745D9009B65D7 /* KeyboardProject.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1A41E62326E745DD009B65D7 /* IMKitSampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1A41E63B26E745DD009B65D7 /* Build configuration list for PBXNativeTarget "IMKitSampleTests" */;
-			buildPhases = (
-				1A41E62026E745DD009B65D7 /* Sources */,
-				1A41E62126E745DD009B65D7 /* Frameworks */,
-				1A41E62226E745DD009B65D7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1A41E62626E745DD009B65D7 /* PBXTargetDependency */,
-			);
-			name = IMKitSampleTests;
-			productName = IMKitSampleTests;
-			productReference = 1A41E62426E745DD009B65D7 /* IMKitSampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		1A41E62D26E745DD009B65D7 /* IMKitSampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1A41E63E26E745DD009B65D7 /* Build configuration list for PBXNativeTarget "IMKitSampleUITests" */;
-			buildPhases = (
-				1A41E62A26E745DD009B65D7 /* Sources */,
-				1A41E62B26E745DD009B65D7 /* Frameworks */,
-				1A41E62C26E745DD009B65D7 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1A41E63026E745DD009B65D7 /* PBXTargetDependency */,
-			);
-			name = IMKitSampleUITests;
-			productName = IMKitSampleUITests;
-			productReference = 1A41E62E26E745DD009B65D7 /* IMKitSampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -182,14 +114,6 @@
 				TargetAttributes = {
 					1A41E61326E745D9009B65D7 = {
 						CreatedOnToolsVersion = 13.0;
-					};
-					1A41E62326E745DD009B65D7 = {
-						CreatedOnToolsVersion = 13.0;
-						TestTargetID = 1A41E61326E745D9009B65D7;
-					};
-					1A41E62D26E745DD009B65D7 = {
-						CreatedOnToolsVersion = 13.0;
-						TestTargetID = 1A41E61326E745D9009B65D7;
 					};
 				};
 			};
@@ -207,8 +131,6 @@
 			projectRoot = "";
 			targets = (
 				1A41E61326E745D9009B65D7 /* KeyboardProject */,
-				1A41E62326E745DD009B65D7 /* IMKitSampleTests */,
-				1A41E62D26E745DD009B65D7 /* IMKitSampleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -222,20 +144,6 @@
 				D6DB7EC72CBA1F9C0042CA6B /* main.tiff in Resources */,
 				D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */,
 				D6DB7EC62CBA1F9C0042CA6B /* Info.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62226E745DD009B65D7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62C26E745DD009B65D7 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,37 +179,11 @@
 				D6DB7EC52CBA1F9C0042CA6B /* InputController.swift in Sources */,
 				68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */,
 				D6DB7EC22CBA1F9C0042CA6B /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62026E745DD009B65D7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1A41E62A26E745DD009B65D7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				D6F68CC92CBAD7E90014E5A6 /* PythonLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		1A41E62626E745DD009B65D7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1A41E61326E745D9009B65D7 /* KeyboardProject */;
-			targetProxy = 1A41E62526E745DD009B65D7 /* PBXContainerItemProxy */;
-		};
-		1A41E63026E745DD009B65D7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1A41E61326E745D9009B65D7 /* KeyboardProject */;
-			targetProxy = 1A41E62F26E745DD009B65D7 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1A41E63626E745DD009B65D7 /* Debug */ = {
@@ -439,8 +321,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeyboardProject/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -472,8 +355,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"KeyboardProject/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = "";
 				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -490,98 +374,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-			};
-			name = Release;
-		};
-		1A41E63C26E745DD009B65D7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ensan.inputmethod.IMKitSampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IMKitSample.app/Contents/MacOS/IMKitSample";
-			};
-			name = Debug;
-		};
-		1A41E63D26E745DD009B65D7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ensan.inputmethod.IMKitSampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IMKitSample.app/Contents/MacOS/IMKitSample";
-			};
-			name = Release;
-		};
-		1A41E63F26E745DD009B65D7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ensan.inputmethod.IMKitSampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = IMKitSample;
-			};
-			name = Debug;
-		};
-		1A41E64026E745DD009B65D7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ensan.inputmethod.IMKitSampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = IMKitSample;
 			};
 			name = Release;
 		};
@@ -602,24 +394,6 @@
 			buildConfigurations = (
 				1A41E63926E745DD009B65D7 /* Debug */,
 				1A41E63A26E745DD009B65D7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1A41E63B26E745DD009B65D7 /* Build configuration list for PBXNativeTarget "IMKitSampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1A41E63C26E745DD009B65D7 /* Debug */,
-				1A41E63D26E745DD009B65D7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1A41E63E26E745DD009B65D7 /* Build configuration list for PBXNativeTarget "IMKitSampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1A41E63F26E745DD009B65D7 /* Debug */,
-				1A41E64026E745DD009B65D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

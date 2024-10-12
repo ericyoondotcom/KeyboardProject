@@ -22,23 +22,11 @@ class InputController: IMKInputController {
     private var isLatexOnly = false;
     private var suggestionInput = "";
     private var lastCharacter: Character? = nil;
-    
-    private let nonLatexSuggestionsList: Dictionary<String, String> = [
-        "happy": "😀",
-        "sad": "😢",
-        "hot": "🥵",
-        "cold": "🥶",
-    ]
-    private let latexSuggestionsList: Dictionary<String, String> = [
-        "phi": "ɸ",
-        "forall": "∀",
-        "lambda": "λ",
-        "dental fricative": "θ",
-        "alveolar plosive": "t",
-        "alveolar approximant": "ɹ"
-    ]
+    private var pylink = PythonLink()
+    private var currCandidates: [String] = []
 
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
+        NSLog("Init")
         let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         guard let clientUnwrapped = inputClient as? IMKTextInput else {
             return nil
@@ -53,21 +41,7 @@ class InputController: IMKInputController {
     }
 
     override func candidates(_ sender: Any) -> [Any] {
-        if suggestionInput.isEmpty {
-            if isLatexOnly {
-                return removeDupes(arr: Array(latexSuggestionsList.values))
-            }
-            return removeDupes(arr: Array(nonLatexSuggestionsList.values) + Array(latexSuggestionsList.values))
-        }
-        var filtered = Array(latexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
-        if !isLatexOnly {
-            let nonLatexFiltered = Array(nonLatexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
-            filtered = nonLatexFiltered + filtered
-            filtered.append(":" + suggestionInput)
-        } else {
-            filtered.append("\\" + suggestionInput)
-        }
-        return removeDupes(arr: filtered)
+        return currCandidates
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
@@ -92,42 +66,35 @@ class InputController: IMKInputController {
         isLatexOnly = false;
         suggestionInput = "";
     }
+    
+    private func fetchFromPython() {
+        NSLog("Fetching from python")
+        Task {
+            if let output = await pylink?.sendStringAndWaitForResult(inputString: suggestionInput) {
+                currCandidates = output
+                NSLog(String(currCandidates.count))
+                await candidates.update()
+            }
+        }
+    }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
         if event.characters == ":" && !isLatexOnly {
             if isSuggesting && candidates.isVisible() {
-                let nonLatexResult = nonLatexSuggestionsList[suggestionInput]
-                let latexResult = latexSuggestionsList[suggestionInput]
-
-                if let nonLatexResult = nonLatexResult {
-                    insertText(text: nonLatexResult)
-                    stopSuggesting()
-                    candidates.hide()
-                    lastCharacter = Character(" ")
-                    return true
-                }
-                if let latexResult = latexResult {
-                    insertText(text: latexResult)
-                    stopSuggesting()
-                    candidates.hide()
-                    lastCharacter = Character(" ")
-                    return true
-                }
-                insertText(text: ":" + suggestionInput + ":")
-                stopSuggesting()
-                candidates.hide()
-                return true
+                // TODO
+                return false
             }
             if let lastCharacter = lastCharacter {
                 if lastCharacter.isWhitespace {
                     startSuggestionInput(isLatexOnly: false)
-                    candidates.update()
+                    fetchFromPython()
                     candidates.show()
                     return true
                 }
             } else {
                 startSuggestionInput(isLatexOnly: false)
-                candidates.update()
+                NSLog("Trying fetch")
+                fetchFromPython()
                 candidates.show()
                 return true
             }
@@ -135,7 +102,7 @@ class InputController: IMKInputController {
         }
         if event.characters == "\\" {
             startSuggestionInput(isLatexOnly: true)
-            candidates.update()
+            fetchFromPython()
             candidates.show()
             return true
         }
@@ -148,7 +115,7 @@ class InputController: IMKInputController {
                 return true
             }
             suggestionInput = String(suggestionInput.prefix(suggestionInput.count - 1))
-            candidates.update()
+            fetchFromPython()
             return true
         }
         if event.keyCode == kVK_Escape {
@@ -183,8 +150,8 @@ class InputController: IMKInputController {
                 insertText(text: chars)
             }
         }
-
-        candidates.update()
+        
+        fetchFromPython()
         return true
     }
 
