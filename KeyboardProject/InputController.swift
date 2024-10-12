@@ -11,8 +11,23 @@ class InputController: IMKInputController {
         kVK_UpArrow,
         kVK_DownArrow,
         kVK_Escape,
-        kVK_Delete,
         kVK_ForwardDelete,
+        kVK_Delete,
+    ]
+    private var isSuggesting = false;
+    private var isLatexOnly = false;
+    private var suggestionInput = "";
+    
+    private let nonLatexSuggestionsList: Dictionary<String, String> = [
+        "happy": "😀",
+        "sad": "😢",
+        "hot": "🥵",
+        "cold": "🥶",
+    ]
+    private let latexSuggestionsList: Dictionary<String, String> = [
+        "phi": "ɸ",
+        "forall": "∀",
+        "lambda": "λ",
     ]
     
     
@@ -30,56 +45,146 @@ class InputController: IMKInputController {
         super.init(server: server, delegate: delegate, client: inputClient)
     }
     
+
     override func candidates(_ sender: Any) -> [Any] {
-        return ["foo", "bar"]
+        if suggestionInput.isEmpty {
+            if isLatexOnly {
+                return InputController.removeDupes(arr: Array(latexSuggestionsList.values))
+            }
+            return InputController.removeDupes(arr: Array(nonLatexSuggestionsList.values) + Array(latexSuggestionsList.values))
+        }
+        var filtered = Array(latexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
+        if !isLatexOnly {
+            let nonLatexFiltered = Array(nonLatexSuggestionsList.filter { $0.key.hasPrefix(suggestionInput) }.values)
+            filtered = nonLatexFiltered + filtered
+            filtered.append(":" + suggestionInput)
+        } else {
+            filtered.append("\\" + suggestionInput)
+        }
+        return InputController.removeDupes(arr: filtered)
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
-        client.insertText(candidateString.string, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+        insertText(text: candidateString.string)
         candidates.hide()
+        stopSuggesting()
     }
 
     override func candidateSelectionChanged(_ candidateString: NSAttributedString) {
         NSLog("%@", "\(#function)")
+    }
+    
+    private func startSuggestionInput(isLatexOnly: Bool) {
+        isSuggesting = true;
+        self.isLatexOnly = isLatexOnly;
+        suggestionInput = "";
+    }
+    
+    private func stopSuggesting() {
+        isSuggesting = false;
+        isLatexOnly = false;
+        suggestionInput = "";
     }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
         guard let client = sender as? IMKTextInput else {
             return false
         }
-        if candidates.isVisible() {
-            candidates.interpretKeyEvents([ event ])
-        }
-        if event.characters == ":" {
-            let length = client.length()
-            let range = NSRange(location: length - 20, length: 20)
-            
-            var actualRange: NSRangePointer? = nil
-            actualRange = NSRangePointer.allocate(capacity: 1)
-            
-            let last20characters = client.string(from: range, actualRange: actualRange)
-            
-            if let last20characters = last20characters {
-                NSLog(last20characters)
+        if event.characters == ":" && !isLatexOnly {
+            if isSuggesting && candidates.isVisible() {
+                let nonLatexResult = nonLatexSuggestionsList[suggestionInput]
+                let latexResult = latexSuggestionsList[suggestionInput]
+                
+                if let nonLatexResult = nonLatexResult {
+                    insertText(text: nonLatexResult)
+                    stopSuggesting()
+                    candidates.hide()
+                    return true
+                }
+                if let latexResult = latexResult {
+                    insertText(text: latexResult)
+                    stopSuggesting()
+                    candidates.hide()
+                    return true
+                }
+                insertText(text: ":" + suggestionInput + ":")
+                stopSuggesting()
+                candidates.hide()
+                return true
             }
-            
+            startSuggestionInput(isLatexOnly: false)
             candidates.update()
             candidates.show()
+            return true
         }
-        if event.keyCode == 0x35 { // escape key
-            candidates.hide()
+        if event.characters == "\\" {
+            startSuggestionInput(isLatexOnly: true)
+            candidates.update()
+            candidates.show()
+            return true
+        }
+        if event.keyCode == kVK_Delete && candidates.isVisible() && isSuggesting {
+            if suggestionInput.count == 0 {
+                suggestionInput = "";
+                isSuggesting = false;
+                isLatexOnly = false;
+                candidates.hide()
+                return true
+            }
+            suggestionInput = String(suggestionInput.prefix(suggestionInput.count - 1))
+            candidates.update()
+            return true
+        }
+        if event.keyCode == kVK_Escape {
+            onSuggestionDismiss()
+            return false
+        }
+        if event.keyCode == kVK_Return {
+            if candidates.isVisible() {
+                candidates.interpretKeyEvents([ event ])
+                return true
+            }
+            return false
         }
         
         // The return value is whether the system interprets the keystroke with default behavior
         // If the event had no associated character, i.e. arrow keys, let the system do its thing
         // If the event was a character that should be typed, consume it
         if controlKeys.contains(Int(event.keyCode)) {
+            if candidates.isVisible() {
+                candidates.interpretKeyEvents([ event ])
+            }
             return false
         }
+        
+        
         if let chars = event.characters {
-            NSLog(chars)
+            if isSuggesting {
+                suggestionInput += chars
+            } else {
+                insertText(text: chars)
+            }
         }
-        client.insertText(event.characters, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+        
+        candidates.update()
         return true
+    }
+    
+    func onSuggestionDismiss() {
+        if isLatexOnly {
+            insertText(text: "\\" + suggestionInput)
+        } else {
+            insertText(text: ":" + suggestionInput)
+        }
+        stopSuggesting()
+        candidates.hide()
+    }
+    
+    func insertText(text: String) {
+        client.insertText(text, replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
+    }
+    
+    static func removeDupes(arr: [String]) -> [String] {
+        return NSOrderedSet(array: arr).map({ $0 as! String })
     }
 }
