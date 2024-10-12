@@ -7,18 +7,13 @@ public class CSVLoader {
 
         do {
             let contents = try String(contentsOfFile: fileName)
-            NSLog(contents)
             let lines = contents.components(separatedBy: "\n")
-            // Iterate over the remaining lines
             for line in lines {
-                NSLog(line)
-                // Split the line into values
                 let values = line.components(separatedBy: ",")
                 if values.count < 2 {
                     continue
                 }
-                NSLog(values[0] + values[1])
-                ret[values[0]] = ret[values[1]]
+                ret[String(values[0].dropFirst())] = values[1]
             }
         } catch {
             NSLog("Returning nil because error, symbols not loaded")

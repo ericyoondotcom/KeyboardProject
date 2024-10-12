@@ -67,12 +67,12 @@ class InputController: IMKInputController {
             return
         }
         for key in macroNicknames.keys {
-            let symbol = macroSymbols[key]
+            let symbol = macroSymbols[String(key.dropFirst())]
             guard let nicknamesList = macroNicknames[key] else {
                 continue
             }
             for nick_name in nicknamesList {
-                suggestionsLatexSemantic[nick_name] = symbol
+                suggestionsLatexSemantic[nick_name.lowercased()] = symbol
             }
                     
         }
@@ -83,39 +83,51 @@ class InputController: IMKInputController {
         if suggestionInput.isEmpty {
             // Present EVERY suggestion to the user
             if isLatexOnly {
-                return removeDupes(arr: suggestionsLatexCanonical.values)
+                return ["\\"] + removeDupes(arr: Array(suggestionsLatexCanonical.values.prefix(10)))
             }
-            return removeDupes(arr: suggestionsEmojiCanonical.values)
+            return [":"] + removeDupes(arr: Array(suggestionsEmojiCanonical.values.prefix(10)))
         }
-        
         
         var suggestions: [String] = []
-        
-        if !isLatexOnly {
-            // If the user wants emojis, show them emojis
-            let filteredEmojiCanonical = Array(suggestionsEmojiCanonical.filter { $0.key.hasPrefix(suggestionInput) }.values)
-            let filteredEmojiSemantic = Array(suggestionsEmojiSemantic.filter { $0.key.hasPrefix(suggestionInput) }.values)
-        
-            suggestions = suggestions + filteredEmojiCanonical + filteredEmojiSemantic
-        }
-        
-        let filteredLatexCanonical = Array(suggestionsLatexCanonical.filter { $0.key.hasPrefix(suggestionInput) }.values)
-        let filteredLatexSemantic = Array(suggestionsLatexSemantic.filter { $0.key.hasPrefix(suggestionInput) }.values)
-    
-        suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
-        for elem in suggestions {
-            NSLog(elem)
-        }
-        // Finally, we need to add the default suggestion if
-        // the user just wants to type the plaintext and not
-        // invoke a macro.
-        
         suggestions.append(
             (isLatexOnly ? "\\" : ":") +
             suggestionInput
         )
+        if !isLatexOnly {
+            // If the user wants emojis, show them emojis
+            let filteredEmojiCanonical = filterWithLimit(dict: suggestionsEmojiCanonical, suggestionInput: suggestionInput)
+            let filteredEmojiSemantic = filterWithLimit(dict: suggestionsEmojiSemantic, suggestionInput: suggestionInput)
+        
+            suggestions = suggestions + filteredEmojiCanonical + filteredEmojiSemantic
+        }
+        
+        let filteredLatexCanonical = filterWithLimit(dict: suggestionsLatexCanonical, suggestionInput: suggestionInput)
+        let filteredLatexSemantic = filterWithLimit(dict: suggestionsLatexSemantic, suggestionInput: suggestionInput.lowercased())
+    
+        suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
+
+        // Finally, we need to add the default suggestion if
+        // the user just wants to type the plaintext and not
+        // invoke a macro.
         
         return removeDupes(arr: suggestions)
+    }
+    
+    private func filterWithLimit(dict: Dictionary<String, String>, suggestionInput: String) -> [String] {
+        var ret: [String] = []
+        var count = 0
+        for key in dict.keys {
+            if key.hasPrefix(suggestionInput) {
+                count += 1
+                if let val = dict[key] {
+                    ret.append(val)
+                }
+            }
+//            if count > 10 {
+//                break
+//            }
+        }
+        return ret
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
