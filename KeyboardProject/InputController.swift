@@ -79,7 +79,7 @@ class InputController: IMKInputController {
         
         
         let emojiShortcodes = CSVLoader.loadEmojiFromShortcodes(fileName: Bundle.main.url(forResource: "emoji_transformed_stage_2", withExtension: "csv")!.path)
-        guard let emojiShortcdes = emojiShortcdoes else {
+        guard let emojiShortcdes = emojiShortcodes else {
             return
         }
         for key in emojiShortcdes.keys {
@@ -119,9 +119,45 @@ class InputController: IMKInputController {
     
         suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
 
-        // Finally, we need to add the default suggestion if
-        // the user just wants to type the plaintext and not
-        // invoke a macro.
+        if suggestionInput.hasPrefix("sponge ") {
+            let input = String(suggestionInput.dropFirst("sponge ".count))
+            suggestions = [spongecase(input)]
+        }
+        if suggestionInput.hasPrefix("fancy ") {
+            let input = String(suggestionInput.dropFirst("fancy ".count))
+            suggestions = [cursiveMathematical(input)]
+        }
+        if suggestionInput.hasPrefix("rgb ") {
+            let split = suggestionInput.split(separator: " ")
+            if split.count == 4 {
+                guard let r = Int(split[1]) else {
+                    return removeDupes(arr: suggestions)
+                }
+                guard let g = Int(split[2]) else {
+                    return removeDupes(arr: suggestions)
+                }
+                guard let b = Int(split[3]) else {
+                    return removeDupes(arr: suggestions)
+                }
+                let hsv = rgbToHSV(r: r, g: g, b: b)
+                let ret = "hsv " + String(hsv.h) + "° " + String(hsv.s) + "% " + String(hsv.v) + "%"
+                suggestions.append(ret)
+            }
+        }
+        if suggestionInput.hasPrefix("0x") {
+            let input = String(suggestionInput.dropFirst("0x".count))
+            guard let val = Int(input, radix: 16) else {
+                return removeDupes(arr: suggestions)
+            }
+            suggestions.append(String(val))
+        }
+        if suggestionInput.hasPrefix("0b") {
+            let input = String(suggestionInput.dropFirst("0b".count))
+            guard let val = Int(input, radix: 2) else {
+                return removeDupes(arr: suggestions)
+            }
+            suggestions.append(String(val))
+        }
         
         return removeDupes(arr: suggestions)
     }
@@ -270,6 +306,69 @@ class InputController: IMKInputController {
         }
         stopSuggesting()
         candidates.hide()
+    }
+        
+    func spongecase(_ text: String) -> String {
+        var result = ""
+        for character in text {
+            if Bool.random() {
+                result += character.uppercased()
+            } else {
+                result += character.lowercased()
+            }
+        }
+        return result
+    }
+    
+    func cursiveMathematical(_ text: String) -> String {
+        let mappings: [Character: String] = [
+            "a": "𝒶", "b": "𝒷", "c": "𝒸", "d": "𝒹", "e": "ℯ", "f": "𝒻", "g": "ℊ",
+            "h": "𝒽", "i": "𝒾", "j": "𝒿", "k": "𝓀", "l": "𝓁", "m": "𝓂", "n": "𝓃",
+            "o": "ℴ", "p": "𝓅", "q": "𝓆", "r": "𝓇", "s": "𝓈", "t": "𝓉", "u": "𝓊",
+            "v": "𝓋", "w": "𝓌", "x": "𝓍", "y": "𝓎", "z": "𝓏"
+        ]
+        var result = ""
+        for char in text.lowercased() {
+            if let cursiveChar = mappings[char] {
+                result += cursiveChar
+            } else {
+                result += String(char)
+            }
+        }
+        return result
+    }
+    
+    func rgbToHSV(r: Int, g: Int, b: Int) -> (h: Int, s: Int, v: Int) {
+        let rFloat = CGFloat(r) / 255.0
+        let gFloat = CGFloat(g) / 255.0
+        let bFloat = CGFloat(b) / 255.0
+
+        let minVal = min(rFloat, gFloat, bFloat)
+        let maxVal = max(rFloat, gFloat, bFloat)
+        let delta = maxVal - minVal
+
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var v: CGFloat = maxVal
+
+        if delta != 0 {
+            s = delta / maxVal
+
+            if rFloat == maxVal {
+                h = (gFloat - bFloat) / delta
+            } else if gFloat == maxVal {
+                h = 2 + (bFloat - rFloat) / delta
+            } else {
+                h = 4 + (rFloat - gFloat) / delta
+            }
+
+            h *= 60
+            if h < 0 {
+                h += 360
+            }
+        }
+
+        return (Int(h), Int(s * 100), Int(v * 100))
     }
 
     func insertText(text: String) {
