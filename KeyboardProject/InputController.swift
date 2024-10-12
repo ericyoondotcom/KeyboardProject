@@ -28,6 +28,9 @@ class InputController: IMKInputController {
         "phi": "ɸ",
         "forall": "∀",
         "lambda": "λ",
+        "dental fricative": "θ",
+        "alveolar plosive": "t",
+        "alveolar approximant": "ɹ"
     ]
     
     
@@ -87,9 +90,6 @@ class InputController: IMKInputController {
     }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
-        guard let client = sender as? IMKTextInput else {
-            return false
-        }
         if event.characters == ":" && !isLatexOnly {
             if isSuggesting && candidates.isVisible() {
                 let nonLatexResult = nonLatexSuggestionsList[suggestionInput]
