@@ -51,6 +51,18 @@ class InputController: IMKInputController {
             candidates.interpretKeyEvents([ event ])
         }
         if event.characters == ":" {
+            let length = client.length()
+            let range = NSRange(location: length - 20, length: 20)
+            
+            var actualRange: NSRangePointer? = nil
+            actualRange = NSRangePointer.allocate(capacity: 1)
+            
+            let last20characters = client.string(from: range, actualRange: actualRange)
+            
+            if let last20characters = last20characters {
+                NSLog(last20characters)
+            }
+            
             candidates.update()
             candidates.show()
         }
