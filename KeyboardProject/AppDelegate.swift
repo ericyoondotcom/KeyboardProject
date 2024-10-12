@@ -27,10 +27,6 @@ class NSManualApplication: NSApplication {
 class AppDelegate: NSObject, NSApplicationDelegate {
     var server = IMKServer()
     var candidatesWindow = IMKCandidates()
-
-    func candidates() -> [Any]! {
-        return ["foo", "bar", "baz"]
-    }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Insert code here to initialize your application
