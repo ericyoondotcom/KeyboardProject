@@ -468,6 +468,7 @@ class InputController: IMKInputController {
         if controlKeys.contains(Int(event.keyCode)) {
             if candidates.isVisible() {
                 candidates.interpretKeyEvents([ event ])
+                return true
             }
             return false
         }
