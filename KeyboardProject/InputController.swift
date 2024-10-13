@@ -1,4 +1,5 @@
 import Cocoa
+import Accelerate
 import InputMethodKit
 
 func removeDupes(arr: [String]) -> [String] {
@@ -31,13 +32,14 @@ class InputController: IMKInputController {
     private var isLatexOnly = false; // if the user invoked the popup with a backslash
     private var suggestionInput = "";
     private var lastCharacter: Character? = nil;
+    private var cloudSuggestions: [String] = []
     
     private var suggestionsLatexCanonical: Dictionary<String, String> = [:]
     private var suggestionsLatexSemantic: Dictionary<String, String> = [:]
     private var suggestionsEmojiCanonical: Dictionary<String, String> = [:]
-    private var suggestionsEmojiSemantic: Dictionary<String, String> = [:]
     
-    private var corpusEmbedding: Array<Array<Float16>> = []
+    private var corpusEmbedding: [[Float]] = []
+    private var emojiIndex: [String] = []
 
     private var debounceTimer: Timer?
     
@@ -52,28 +54,51 @@ class InputController: IMKInputController {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = data
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let data = data else {
-                print("Error: No response data")
-                return
-            }
-            
-            do {
-                let jsonResponse = try JSONDecoder().decode(CFAIResponse.self, from: data)
-                NSLog(String(jsonResponse.shape[0]) + ", " + String(jsonResponse.shape[1]))
-            } catch {
-                print("Error parsing JSON")
+        let task = URLSession.shared.dataTask(with: request) { [self] data, response, error in
+            Task {
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = data else {
+                    print("Error: No response data")
+                    return
+                }
+                
+                do {
+                    let jsonResponse = try JSONDecoder().decode(CFAIResponse.self, from: data)
+                    NSLog(String(jsonResponse.shape[0]) + ", " + String(jsonResponse.shape[1]))
+                    if jsonResponse.data.count == 0 {
+                        print("Error: vector has dimension 0")
+                        return
+                    }
+                    var cos = self.cosineSimilarity(vector: InputController.convertFloat16ToFloat(input: jsonResponse.data[0]))
+                   
+                    var indicesOfTopTen = InputController.topTenIndices(array: cos)
+                    var topTenEmojis: [String] = []
+                    for idx in indicesOfTopTen {
+                        topTenEmojis.append(emojiIndex[idx])
+                        NSLog(emojiIndex[idx])
+                    }
+                    cloudSuggestions = topTenEmojis
+                    
+                    let filteredEmojiCanonical = filterWithLimit(dict: suggestionsEmojiCanonical, suggestionInput: suggestionInput)
+                    if filteredEmojiCanonical.count < 9 {
+                        await MainActor.run {
+                            candidates.update()
+                        }
+                    }
+                } catch {
+                    print("Error parsing JSON")
+                }
             }
         }
         task.resume()
     }
     
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
+        NSLog("Initializing keyboard")
         let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
         guard let clientUnwrapped = inputClient as? IMKTextInput else {
             return nil
@@ -88,6 +113,7 @@ class InputController: IMKInputController {
         
         
         loadSuggestionArrays()
+        loadCorpusEmbedding()
     }
     
     func loadSuggestionArrays() {
@@ -134,37 +160,35 @@ class InputController: IMKInputController {
         let url = URL(string: "https://my-emoji.sidachen2003.workers.dev")!
 
         if let data = CSVLoader.loadEmojiDesc(fileName: Bundle.main.url(forResource: "emoji_desc", withExtension: "csv")!.path) {
-            print(Array(data.values))
             guard let data = try? JSONSerialization.data(withJSONObject: Array(data.values)) else {
                 print("Error: unable to serialize")
                 return
             }
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = data
-            let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-                if let error = error {
-                    print("Error: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let data = data else {
-                    print("Error: No response data")
-                    return
-                }
-                
-                do {
-                    let jsonResponse = try JSONDecoder().decode(CFAIResponse.self, from: data)
-                    NSLog("Retrieved corpus embedding: " + String(jsonResponse.shape[0]) + ", " + String(jsonResponse.shape[1]))
-                    self?.corpusEmbedding = jsonResponse.data
-                } catch {
-                    print("Error parsing JSON")
-                    print(data)
-                }
-            }
-            task.resume()
         }
+    }
+    
+    private func loadCorpusEmbedding() {
+        NSLog("Loading corpus embedding")
+        guard let url = Bundle.main.url(forResource: "emoji_index", withExtension: "json") else {
+            NSLog("Bad URL")
+            return
+        }
+        guard let res = CSVLoader.loadEmojiIndex(filename: url) else {
+            NSLog("No emoji index")
+            return
+        }
+        emojiIndex = res
+        
+        
+        guard let url = Bundle.main.url(forResource: "emoji_desc_embeddings", withExtension: "json") else {
+            NSLog("Bad URL")
+            return
+        }
+        guard let res = CSVLoader.loadEmojiEmbeddings(filename: url) else {
+            NSLog("No emoji embeddings")
+            return
+        }
+        corpusEmbedding = res
     }
 
     override func candidates(_ sender: Any) -> [Any] {
@@ -184,9 +208,16 @@ class InputController: IMKInputController {
         if !isLatexOnly {
             // If the user wants emojis, show them emojis
             let filteredEmojiCanonical = filterWithLimit(dict: suggestionsEmojiCanonical, suggestionInput: suggestionInput)
-            let filteredEmojiSemantic = filterWithLimit(dict: suggestionsEmojiSemantic, suggestionInput: suggestionInput)
         
-            suggestions = suggestions + filteredEmojiCanonical + filteredEmojiSemantic
+            suggestions = suggestions + filteredEmojiCanonical
+            
+            if suggestions.count < 9 {
+                if cloudSuggestions.count == 0 {
+                    suggestions = suggestions + ["(thinking.)", "(thinking..)", "(thinking...)"]
+                } else {
+                    suggestions = suggestions + cloudSuggestions.prefix(3)
+                }
+            }
         }
         
         let filteredLatexCanonical = filterWithLimit(dict: suggestionsLatexCanonical, suggestionInput: suggestionInput)
@@ -255,6 +286,9 @@ class InputController: IMKInputController {
     }
 
     override func candidateSelected(_ candidateString: NSAttributedString) {
+        if candidateString.string == "(thinking.)" || candidateString.string == "(thinking..)" || candidateString.string == "(thinking...)" {
+            return
+        }
         insertText(text: candidateString.string)
         candidates.hide()
         stopSuggesting()
@@ -269,6 +303,7 @@ class InputController: IMKInputController {
         isSuggesting = true;
         self.isLatexOnly = isLatexOnly;
         suggestionInput = "";
+        cloudSuggestions = []
     }
 
     private func stopSuggesting() {
@@ -276,6 +311,7 @@ class InputController: IMKInputController {
         isLatexOnly = false;
         suggestionInput = "";
         debounceTimer?.invalidate()
+        cloudSuggestions = []
     }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
@@ -325,6 +361,7 @@ class InputController: IMKInputController {
                 return true
             }
             suggestionInput = String(suggestionInput.prefix(suggestionInput.count - 1))
+            cloudSuggestions = []
             candidates.update()
             return true
         }
@@ -337,6 +374,7 @@ class InputController: IMKInputController {
                 candidates.interpretKeyEvents([ event ])
                 return true
             }
+            lastCharacter = Character(" ")
             return false
         }
 
@@ -356,6 +394,7 @@ class InputController: IMKInputController {
             }
             if isSuggesting {
                 suggestionInput += chars
+                cloudSuggestions = []
                 if !isLatexOnly {
                     debounceTimer?.invalidate()
                     debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: false) { [weak self] _ in
@@ -423,7 +462,7 @@ class InputController: IMKInputController {
 
         var h: CGFloat = 0
         var s: CGFloat = 0
-        var v: CGFloat = maxVal
+        let v: CGFloat = maxVal
 
         if delta != 0 {
             s = delta / maxVal
@@ -443,6 +482,35 @@ class InputController: IMKInputController {
         }
 
         return (Int(h), Int(s * 100), Int(v * 100))
+    }
+    
+    func cosineSimilarity(vector: [Float]) -> [Float] {
+        let vectorMagnitude = sqrt(vector.map { $0 * $0 }.reduce(0, +))
+        
+        return corpusEmbedding.map { corpusVector in
+            let dotProduct = zip(vector, corpusVector).map { $0 * $1 }.reduce(0, +)
+            let corpusVectorMagnitude = sqrt(corpusVector.map { $0 * $0 }.reduce(0, +))
+            
+            return dotProduct / (vectorMagnitude * corpusVectorMagnitude)
+        }
+    }
+    
+    static func convertFloat16ToFloat(input: [Float16]) -> [Float] {
+        var output = [Float]()
+        
+        for value in input {
+            output.append(Float(value))
+        }
+        
+        return output
+    }
+    
+    static func topTenIndices(array: [Float]) -> [Int] {
+        let indexedArray = array.enumerated().map { ($0.element, $0.offset) }
+        let sortedArray = indexedArray.sorted { $0.0 > $1.0 }
+        let topTenIndices = sortedArray.prefix(10).map { $0.1 }
+        
+        return topTenIndices
     }
 
     func insertText(text: String) {

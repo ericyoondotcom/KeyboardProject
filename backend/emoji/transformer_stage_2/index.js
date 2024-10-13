@@ -26,11 +26,16 @@ function transform() {
 
 async function transformForDesc() {
 	const allDesc = [];
+	const codes = [];
 	for (const emoji of data) {
 		allDesc.push(emoji.cleaned_description);
+		codes.push(emoji.code);
 	}
-	console.log(allDesc.length);
+
+	fs.writeFileSync("../emoji_index.json", JSON.stringify(codes));
+
 	return;
+
 	const allData = [];
 	for (let i = 0; i < allDesc.length; i += 50) {
 		const res = await fetch("https://my-emoji.sidachen2003.workers.dev", {
