@@ -10,6 +10,7 @@
 		3C1E8CF52CBB04D400CFEE6C /* latex_data.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */; };
 		3C1E8CF62CBB04D400CFEE6C /* latex_unicode.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */; };
 		3C1E8CF92CBB054100CFEE6C /* CSVLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1E8CF82CBB054100CFEE6C /* CSVLoader.swift */; };
+		3C2254742CBB45AC00A6B9D5 /* phonetics.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3C2254732CBB45AC00A6B9D5 /* phonetics.csv */; };
 		3CDD09802CBAFF990036CE56 /* TrieSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDD097F2CBAFF990036CE56 /* TrieSwift.swift */; };
 		68243A1B2CBA2A6300A8704F /* InputCandidates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68243A1A2CBA2A6300A8704F /* InputCandidates.swift */; };
 		D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */; };
@@ -45,6 +46,7 @@
 		3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = latex_data.csv; sourceTree = "<group>"; };
 		3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = latex_unicode.csv; sourceTree = "<group>"; };
 		3C1E8CF82CBB054100CFEE6C /* CSVLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVLoader.swift; sourceTree = "<group>"; };
+		3C2254732CBB45AC00A6B9D5 /* phonetics.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phonetics.csv; sourceTree = "<group>"; };
 		3CDD097F2CBAFF990036CE56 /* TrieSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrieSwift.swift; sourceTree = "<group>"; };
 		68243A1A2CBA2A6300A8704F /* InputCandidates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputCandidates.swift; sourceTree = "<group>"; };
 		D6DB7EB72CBA1F9C0042CA6B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		3C1E8CF72CBB04E200CFEE6C /* assets */ = {
 			isa = PBXGroup;
 			children = (
+				3C2254732CBB45AC00A6B9D5 /* phonetics.csv */,
 				D6DD7E082CBB2605005CAE8E /* emoji_transformed_stage_2.csv */,
 				3C1E8CF32CBB04D400CFEE6C /* latex_data.csv */,
 				3C1E8CF42CBB04D400CFEE6C /* latex_unicode.csv */,
@@ -245,6 +248,7 @@
 				D6DB7EC72CBA1F9C0042CA6B /* main.tiff in Resources */,
 				D6DD7E092CBB2605005CAE8E /* emoji_transformed_stage_2.csv in Resources */,
 				3C1E8CF52CBB04D400CFEE6C /* latex_data.csv in Resources */,
+				3C2254742CBB45AC00A6B9D5 /* phonetics.csv in Resources */,
 				3C1E8CF62CBB04D400CFEE6C /* latex_unicode.csv in Resources */,
 				D6DB7EC12CBA1F9C0042CA6B /* Preview Assets.xcassets in Resources */,
 				D6DB7EC62CBA1F9C0042CA6B /* Info.plist in Resources */,

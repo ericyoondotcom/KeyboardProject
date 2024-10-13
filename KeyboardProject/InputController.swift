@@ -24,6 +24,7 @@ class InputController: IMKInputController {
     ]
     private var isSuggesting = false;
     private var isLatexOnly = false; // if the user invoked the popup with a backslash
+    private var isIPAOnly = false;
     private var suggestionInput = "";
     private var lastCharacter: Character? = nil;
     
@@ -31,6 +32,7 @@ class InputController: IMKInputController {
     private var suggestionsLatexSemantic: Dictionary<String, String> = [:]
     private var suggestionsEmojiCanonical: Dictionary<String, String> = [:]
     private var suggestionsEmojiSemantic: Dictionary<String, String> = [:]
+    private var suggestionsIPA: Array<[String]> = []
     
     
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
@@ -53,6 +55,7 @@ class InputController: IMKInputController {
     func loadSuggestionArrays() {
         let macroSymbols = CSVLoader.loadLatexMacroSymbols(fileName: Bundle.main.url(forResource: "latex_unicode", withExtension: "csv")!.path)
         let macroNicknames = CSVLoader.loadLatexMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
+    
         guard let macroSymbols = macroSymbols else {
             return
         }
@@ -77,7 +80,6 @@ class InputController: IMKInputController {
                     
         }
         
-        
         let emojiShortcodes = CSVLoader.loadEmojiFromShortcodes(fileName: Bundle.main.url(forResource: "emoji_transformed_stage_2", withExtension: "csv")!.path)
         guard let emojiShortcdes = emojiShortcodes else {
             return
@@ -90,6 +92,12 @@ class InputController: IMKInputController {
                 suggestionsEmojiCanonical[shortcode] = key
             }
         }
+        
+        let macroIPA = CSVLoader.loadIPASymbols(fileName: Bundle.main.url(forResource: "phonetics", withExtension: "csv")!.path)
+        guard let macroIPA = macroIPA else {
+            return
+        }
+        suggestionsIPA = macroIPA
     }
 
     override func candidates(_ sender: Any) -> [Any] {
@@ -98,15 +106,22 @@ class InputController: IMKInputController {
             if isLatexOnly {
                 return ["\\"] + removeDupes(arr: Array(suggestionsLatexCanonical.values.prefix(10)))
             }
+            if isIPAOnly {
+                return ["|"] + removeDupes(arr: Array(suggestionsLatexCanonical.values.prefix(10)))
+            }
             return [":"] + removeDupes(arr: Array(suggestionsEmojiCanonical.values.prefix(10)))
         }
         
         var suggestions: [String] = []
-        suggestions.append(
-            (isLatexOnly ? "\\" : ":") +
-            suggestionInput
-        )
-        if !isLatexOnly {
+        if isIPAOnly {
+            suggestions.append("|" + suggestionInput)
+        } else if isLatexOnly {
+            suggestions.append("\\" + suggestionInput)
+        } else {
+            suggestions.append(":" + suggestionInput)
+        }
+        
+        if !isLatexOnly && !isIPAOnly {
             // If the user wants emojis, show them emojis
             let filteredEmojiCanonical = filterWithLimit(dict: suggestionsEmojiCanonical, suggestionInput: suggestionInput)
             let filteredEmojiSemantic = filterWithLimit(dict: suggestionsEmojiSemantic, suggestionInput: suggestionInput)
@@ -114,10 +129,17 @@ class InputController: IMKInputController {
             suggestions = suggestions + filteredEmojiCanonical + filteredEmojiSemantic
         }
         
-        let filteredLatexCanonical = filterWithLimit(dict: suggestionsLatexCanonical, suggestionInput: suggestionInput)
-        let filteredLatexSemantic = filterWithLimit(dict: suggestionsLatexSemantic, suggestionInput: suggestionInput.lowercased())
-    
-        suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
+        if isLatexOnly {
+            let filteredLatexCanonical = filterWithLimit(dict: suggestionsLatexCanonical, suggestionInput: suggestionInput)
+            let filteredLatexSemantic = filterWithLimit(dict: suggestionsLatexSemantic, suggestionInput: suggestionInput.lowercased())
+            suggestions = suggestions + filteredLatexCanonical + filteredLatexSemantic
+        }
+        
+        if isIPAOnly {
+            var specified_prefixes: [String] = suggestionInput.lowercased().components(separatedBy: .whitespaces)
+            
+            suggestions += get_matched_ipa(specified_prefixes: specified_prefixes)
+        }
 
         if suggestionInput.hasPrefix("sponge ") {
             let input = String(suggestionInput.dropFirst("sponge ".count))
@@ -162,6 +184,60 @@ class InputController: IMKInputController {
         return removeDupes(arr: suggestions)
     }
     
+    private func get_matched_ipa(specified_prefixes: [String]) -> [String] {
+        var result: [String] = []
+        for ipa in suggestionsIPA {
+            if ipa_matches(ipa: ipa, specified_prefixes: specified_prefixes) {
+                result.append(ipa[0])
+            }
+        }
+        return result
+    }
+    
+    private func ipa_matches(ipa: [String], specified_prefixes: [String]) -> Bool {
+        if specified_prefixes.isEmpty {
+            return false
+        }
+        
+        if let ipa_type = specified_prefixes[0].first {
+            
+            if ipa[1].lowercased() != String(ipa_type).lowercased() {
+                return false
+            }
+            
+            var first: Bool = true
+            for pre in specified_prefixes {
+                var match: Bool = false
+                for i in 2..<ipa.count {
+                    if first && pre.isEmpty {
+                        return false
+                    }
+                    
+                    if first {
+                        let offsetIndex = pre.index(pre.startIndex, offsetBy: 1)
+                        if ipa[i].hasPrefix(String(pre[offsetIndex..<pre.endIndex]).lowercased()) {
+                            match = true
+                            break
+                        }
+                    } else {
+                        if ipa[i].hasPrefix(pre.lowercased()) {
+                            match = true
+                            break
+                        }
+                    }
+                }
+                
+                first = false
+                if !match {
+                    return false
+                }
+            }
+        } else {
+            return false
+        }
+        return true
+    }
+    
     private func filterWithLimit(dict: Dictionary<String, String>, suggestionInput: String) -> [String] {
         var ret: [String] = []
         var count = 0
@@ -190,25 +266,26 @@ class InputController: IMKInputController {
         NSLog("%@", "\(#function)")
     }
 
-    private func startSuggestionInput(isLatexOnly: Bool) {
+    private func startSuggestionInput(isLatexOnly: Bool, isIPAOnly: Bool) {
         isSuggesting = true;
         self.isLatexOnly = isLatexOnly;
+        self.isIPAOnly = isIPAOnly;
         suggestionInput = "";
     }
 
     private func stopSuggesting() {
         isSuggesting = false;
         isLatexOnly = false;
+        isIPAOnly = false;
         suggestionInput = "";
     }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
-        if event.characters == ":" && !isLatexOnly {
+        if event.characters == ":" && !isLatexOnly && !isIPAOnly {
             if isSuggesting && candidates.isVisible() {
                 let semanticResult = suggestionsEmojiSemantic[suggestionInput]
                 let canonicalResult = suggestionsEmojiCanonical[suggestionInput]
 
-                
                 if let canonicalResult = canonicalResult {
                     insertText(text: canonicalResult)
                     stopSuggesting()
@@ -230,13 +307,13 @@ class InputController: IMKInputController {
             }
             if let lastCharacter = lastCharacter {
                 if lastCharacter.isWhitespace {
-                    startSuggestionInput(isLatexOnly: false)
+                    startSuggestionInput(isLatexOnly: false, isIPAOnly: false)
                     candidates.update()
                     candidates.show()
                     return true
                 }
             } else {
-                startSuggestionInput(isLatexOnly: false)
+                startSuggestionInput(isLatexOnly: false, isIPAOnly: false)
                 candidates.update()
                 candidates.show()
                 return true
@@ -244,7 +321,13 @@ class InputController: IMKInputController {
             return false
         }
         if event.characters == "\\" {
-            startSuggestionInput(isLatexOnly: true)
+            startSuggestionInput(isLatexOnly: true, isIPAOnly: false)
+            candidates.update()
+            candidates.show()
+            return true
+        }
+        if event.characters == "|" {
+            startSuggestionInput(isLatexOnly: false, isIPAOnly: true)
             candidates.update()
             candidates.show()
             return true
@@ -301,6 +384,8 @@ class InputController: IMKInputController {
     func onSuggestionDismiss() {
         if isLatexOnly {
             insertText(text: "\\" + suggestionInput)
+        } else if isIPAOnly {
+            insertText(text: "|" + suggestionInput)
         } else {
             insertText(text: ":" + suggestionInput)
         }

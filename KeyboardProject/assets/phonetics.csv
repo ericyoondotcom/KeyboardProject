@@ -1,0 +1,156 @@
+a,a,open  front unrounded vowel
+ɐ,a>,near-open  central vowel
+ɑ,a=,open  back unrounded vowel
+ɒ,o=,open  back rounded vowel
+æ,a<,near-open  front unrounded vowel
+A,A,A
+b,b,vd  bilabial plosive
+ɓ,b>,vd  bilabial implosive
+ʙ,B=,vd  bilabial trill
+β,b=,vd  bilabial fricative
+B,B,B
+c,c,vl  palatal plosive
+ƈ,c>,"vl  palatal implosive (withdrawn, 1993)"
+ç,c=,vl  palatal fricative
+ɕ,c<,vl  alveolo-palatal fricative
+C,C,Creak
+C,C,C (Creak)
+d,d,vd  dental or alveolar plosive
+ɗ,d>,vd  dental or alveolar implosive
+ɖ,d<,vd  retroflex plosive
+ᶑ,d>$$$$,vd  retroflex implosive (not explicitly IPA approved)
+ð,d=,vd  dental fricative
+D,D,D
+e,e,close-mid  front unrounded vowel
+ᵊ,e=^,mid  central vowel release
+ə,e=,mid  central vowel
+ɘ,E=,close-mid  central unrounded vowel
+ɛ,e<,open-mid  front unrounded vowel
+ʚ,e|,"open-mid  central rounded vowel (superceded by 395, 1996)"
+ɜ,e>,open-mid  central unrounded vowel
+ɞ,O<,open-mid  central rounded vowel
+E,E,E
+f,f,vl  labiodental fricative
+F,F,Falsetto
+F,F,F (Falsetto)
+ɡ,g<,vd  velar plosive (equivalent to 210)
+ɠ,g>,vd  velar implosive
+g,g,vd velar plosive (equivalent to 110)
+ɢ,G=,vd  uvular plosive
+ʛ,G>,vd  uvular implosive
+G,G,G
+ɣ,g=,vd  velar fricative
+ˠ,g=^,velarized
+ɤ,O>,close-mid  back unrounded vowel
+h,h,vl  glottal fricative
+ʰ,h^,aspirated
+ʰ,h^,Pre-aspiration
+ħ,h>,vl  pharyngeal fricative
+ɦ,h<,vd  glottal fricative
+ɧ,H>,simultaneous  vl postalveolar and velar fricative
+ʜ,H=,vl  epiglottal fricative
+H,H,H
+i,i,close  front unrounded vowel
+ɨ,I=,close  central unrounded vowel
+ɩ,i|,"near-close  near-front unrounded vowel (superseded by 319, 1989)"
+ɪ,i=,near-close  near-front unrounded vowel
+I,I,I
+j,j,vd  palatal approximant
+ʲ,j^,palatalized
+ʝ,j<,vd  palatal fricative
+ɟ,j=,vd  palatal plosive
+ʄ,j>,vd  palatal implosive
+J,J,Jaw
+J,J,J (Jaw)
+k,k,vl  velar plosive
+ƙ,k>,"vl  velar implosive (withdrawn, 1993)"
+K,K,K
+l,l,vd  dental or alveolar lateral approximant
+ˡ,l^,lateral  release
+ɫ,l~~,velarized  vd dental or alveolar lateral approximant
+ɬ,l=,vl  dental or alveolar lateral fricative
+ɭ,l<,vd  retroflex lateral approximant
+ʟ,L=,vd  velar lateral approximant
+ɮ,l>,vd  dental or alveolar lateral fricative
+L,L,Larynx
+L,L,L (Larynx)
+m,m,vd  bilabial nasal
+ɱ,m>,vd  labiodental nasal
+ɯ,u=,close  back unrounded vowel
+ɰ,w>,vd  velar approximant
+M,M,M
+n,n,vd  dental or alveolar nasal
+ⁿ,n^,nasal  release
+ɲ,n=,vd  palatal nasal
+ŋ,n>,vd  velar nasal
+ɳ,n<,vd  retroflex nasal
+ɴ,N=,vd  uvular nasal
+N,N,N
+o,o,close-mid  back rounded vowel
+ʘ,p=,bilabial  click
+ɵ,O=,close-mid  central rounded vowel
+ø,o>,close-mid  front rounded vowel
+œ,E<,open-mid  front rounded vowel
+ɶ,E>,open  front rounded vowel
+ɔ,o<,open-mid  back rounded vowel
+ɷ,u|,"near-close  near-back rounded vowel (superceded by 321, 1989)"
+O,O,O
+p,p,vl  bilabial plosive
+ƥ,p>,"vl  bilabial implosive (withdrawn, 1993)"
+P,P,P
+ɸ,f=,vl  bilabial fricative
+q,q,vl  uvular plosive
+ʠ,q>,"vl  uvular implosive (withdrawn, 1993)"
+Q,Q,Q
+r,r,vd  dental or alveolar trill
+ɾ,r>,vd  dental or alveolar tap
+ɺ,L>,vd  alveolar lateral flap
+ɽ,r<,vd  retroflex flap
+ɹ,r=,vd  dental or alveolar approximant
+ɻ,R<,vd  retroflex approximant
+ʀ,R=,vd  uvular trill
+R,R,R
+ʁ,R>,vd  uvular fricative
+ʶ,R>^,Uvularized
+s,s,vl  alveolar fricative
+ˢ,s^,"Withdrawn,  1989"
+ʂ,s<,vl  retroflex fricative
+S,S,S
+ʃ,s=,vl  postalveolar fricative
+t,t,vl  dental or alveolar plosive
+ƭ,t>,"vl  dental or alveolar implosive (withdrawn, 1993)"
+ʈ,t<,vl  retroflex plosive
+ʇ,T|,"dental  click (superceded by 177, 1989)"
+T,T,T
+θ,t=,vl  dental fricative
+ᶿ,t=^,vl  dental fricative release
+u,u,close  back rounded vowel
+ʉ,U=,close  central rounded vowel
+ʊ,u<,near-close  near-back rounded vowel
+U,U,U
+v,v,vd  labiodental fricative
+ⱱ,v<,labiodental  flap
+ʋ,v=,vd  labiodental approximant
+ᶹ,v=^,Labiodentalized
+ʌ,u>,open-mid  back unrounded vowel
+V,V,Voice
+V,V,V (Voice)
+w,w,vd  labial-velar approximant
+ʷ,w^,labialized
+ʍ,w=,vl  labial-velar fricative
+W,W,Whisper
+W,W,W (Whisper)
+x,x,vl  velar fricative
+ˣ,x^,vl  velar fricative release
+χ,x=,vl  uvular fricative
+X,X,X
+y,y,close  front rounded vowel
+ʸ,y^,high-front rounding / palatalized (not IPA usage)
+ʎ,L<,vd  palatal lateral approximant
+ʏ,Y=,near-close  near-front rounded vowel
+Y,Y,Y
+z,z,vd  alveolar fricative
+ʑ,z>,vd  alveolo-palatal fricative
+ʐ,z<,vd  retroflex fricative
+ʒ,z=,vd  postalveolar fricative
+Z,Z,Z
