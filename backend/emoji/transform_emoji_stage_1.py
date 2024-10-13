@@ -18,6 +18,12 @@ def transform_row(row):
     row["all_names"] = json.dumps(all_names)
     all_codes = {d["source"]: d["code"] for d in json.loads(row["shortcodes"] or "[]")}
     row["all_codes"] = json.dumps(all_codes)
+    if not row["cleaned_description"]:
+        row["cleaned_description"] = "; ".join(
+            [k.replace(":", "").replace("_", " ") for k in all_codes.values()]
+        )
+    if not row["cleaned_description"]:
+        row["cleaned_description"] = "; ".join(all_names)
     del row["title"]
     del row["currentCldrName"]
     del row["appleName"]
@@ -48,4 +54,4 @@ for code in emoji.EMOJI_DATA.keys():
             }),
         }
 
-data.to_csv("emoji_transformed.csv", index=False)
+data.to_csv("emoji_transformed_stage_1.csv", index=False)

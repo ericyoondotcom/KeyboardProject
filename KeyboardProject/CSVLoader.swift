@@ -69,4 +69,27 @@ public class CSVLoader {
         NSLog("Loaded " + String(ret.keys.count) + " entries of emoji shortcodes")
         return ret
     }
+    
+    public static func loadEmojiDesc(fileName: String) -> Dictionary<String, String>? {
+        var ret: Dictionary<String, String> = Dictionary<String, String>()
+        
+        do {
+            let contents = try String(contentsOfFile: fileName)
+            let lines = contents.components(separatedBy: "\n")
+            // Iterate over the remaining lines
+            for line in lines {
+                // Split the line into values
+                if let index = line.firstIndex(of: ",") {
+                    let firstPart = line[..<index]
+                    let secondPart = line[line.index(after: index)...]
+                    ret[String(firstPart)] = secondPart.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+                }
+            }
+        } catch {
+            NSLog("Returning nil because error, symbols not loaded")
+            return nil
+        }
+        NSLog("Loaded " + String(ret.keys.count) + " entries of emoji descriptions")
+        return ret
+    }
 }

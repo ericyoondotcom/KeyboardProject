@@ -9,6 +9,11 @@ func removeDupes(arr: Dictionary<String, String>.Values) -> [String] {
     return removeDupes(arr: Array(arr))
 }
 
+struct CFAIResponse: Decodable {
+    let data: Array<Array<Float16>>
+    let shape: Array<Int32>
+}
+
 @objc(InputController)
 class InputController: IMKInputController {
     private let candidates: IMKCandidates
@@ -32,6 +37,41 @@ class InputController: IMKInputController {
     private var suggestionsEmojiCanonical: Dictionary<String, String> = [:]
     private var suggestionsEmojiSemantic: Dictionary<String, String> = [:]
     
+    private var corpusEmbedding: Array<Array<Float16>> = []
+
+    private var debounceTimer: Timer?
+    
+    private func requestSemanticEmojis() {
+        NSLog("Requesting semantic emojis")
+        let url = URL(string: "https://my-emoji.sidachen2003.workers.dev")!
+        guard let data = try? JSONSerialization.data(withJSONObject: [suggestionInput]) else {
+            print("Error: unable to serialize")
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = data
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let data = data else {
+                print("Error: No response data")
+                return
+            }
+            
+            do {
+                let jsonResponse = try JSONDecoder().decode(CFAIResponse.self, from: data)
+                NSLog(String(jsonResponse.shape[0]) + ", " + String(jsonResponse.shape[1]))
+            } catch {
+                print("Error parsing JSON")
+            }
+        }
+        task.resume()
+    }
     
     override init!(server: IMKServer, delegate: Any, client inputClient: Any) {
         let candidatesWrapped = IMKCandidates(server: server, panelType: kIMKSingleColumnScrollingCandidatePanel)
@@ -89,6 +129,41 @@ class InputController: IMKInputController {
             for shortcode in shortcodesList {
                 suggestionsEmojiCanonical[shortcode] = key
             }
+        }
+        
+        let url = URL(string: "https://my-emoji.sidachen2003.workers.dev")!
+
+        if let data = CSVLoader.loadEmojiDesc(fileName: Bundle.main.url(forResource: "emoji_desc", withExtension: "csv")!.path) {
+            print(Array(data.values))
+            guard let data = try? JSONSerialization.data(withJSONObject: Array(data.values)) else {
+                print("Error: unable to serialize")
+                return
+            }
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = data
+            let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+                if let error = error {
+                    print("Error: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let data = data else {
+                    print("Error: No response data")
+                    return
+                }
+                
+                do {
+                    let jsonResponse = try JSONDecoder().decode(CFAIResponse.self, from: data)
+                    NSLog("Retrieved corpus embedding: " + String(jsonResponse.shape[0]) + ", " + String(jsonResponse.shape[1]))
+                    self?.corpusEmbedding = jsonResponse.data
+                } catch {
+                    print("Error parsing JSON")
+                    print(data)
+                }
+            }
+            task.resume()
         }
     }
 
@@ -200,24 +275,16 @@ class InputController: IMKInputController {
         isSuggesting = false;
         isLatexOnly = false;
         suggestionInput = "";
+        debounceTimer?.invalidate()
     }
 
     override func handle(_ event: NSEvent, client sender: Any) -> Bool {
         if event.characters == ":" && !isLatexOnly {
             if isSuggesting && candidates.isVisible() {
-                let semanticResult = suggestionsEmojiSemantic[suggestionInput]
                 let canonicalResult = suggestionsEmojiCanonical[suggestionInput]
 
-                
                 if let canonicalResult = canonicalResult {
                     insertText(text: canonicalResult)
-                    stopSuggesting()
-                    candidates.hide()
-                    lastCharacter = Character(" ")
-                    return true
-                }
-                if let semanticResult = semanticResult {
-                    insertText(text: semanticResult)
                     stopSuggesting()
                     candidates.hide()
                     lastCharacter = Character(" ")
@@ -289,6 +356,13 @@ class InputController: IMKInputController {
             }
             if isSuggesting {
                 suggestionInput += chars
+                if !isLatexOnly {
+                    debounceTimer?.invalidate()
+                    debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: false) { [weak self] _ in
+                        self?.requestSemanticEmojis()
+                    }
+                    NSLog("Triggering semantic emojis")
+                }
             } else {
                 insertText(text: chars)
             }
