@@ -115,12 +115,12 @@ class InputController: IMKInputController {
         
         
         loadSuggestionArrays()
-        loadCorpusEmbedding()
+//        loadCorpusEmbedding()
     }
     
     func loadSuggestionArrays() {
         let macroSymbols = CSVLoader.loadLatexMacroSymbols(fileName: Bundle.main.url(forResource: "latex_unicode", withExtension: "csv")!.path)
-        let macroNicknames = CSVLoader.loadLatexMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
+//        let macroNicknames = CSVLoader.loadLatexMacroNicknames(fileName: Bundle.main.url(forResource: "latex_data", withExtension: "csv")!.path)
     
         guard let macroSymbols = macroSymbols else {
             return
@@ -132,19 +132,19 @@ class InputController: IMKInputController {
             let replaced = symb.replacingOccurrences(of: "\\", with: "", options: .literal, range: nil)
             suggestionsLatexCanonical[key] = replaced
         }
-        guard let macroNicknames = macroNicknames else {
-            return
-        }
-        for key in macroNicknames.keys {
-            let symbol = macroSymbols[String(key.dropFirst())]
-            guard let nicknamesList = macroNicknames[key] else {
-                continue
-            }
-            for nick_name in nicknamesList {
-                suggestionsLatexSemantic[nick_name.lowercased()] = symbol
-            }
-                    
-        }
+//        guard let macroNicknames = macroNicknames else {
+//            return
+//        }
+//        for key in macroNicknames.keys {
+//            let symbol = macroSymbols[String(key.dropFirst())]
+//            guard let nicknamesList = macroNicknames[key] else {
+//                continue
+//            }
+//            for nick_name in nicknamesList {
+//                suggestionsLatexSemantic[nick_name.lowercased()] = symbol
+//            }
+//                    
+//        }
         
         let emojiShortcodes = CSVLoader.loadEmojiFromShortcodes(fileName: Bundle.main.url(forResource: "emoji_transformed_stage_2", withExtension: "csv")!.path)
         guard let emojiShortcdes = emojiShortcodes else {
@@ -226,13 +226,13 @@ class InputController: IMKInputController {
         
             suggestions = suggestions + filteredEmojiCanonical
             
-            if suggestions.count < 9 {
-                if cloudSuggestions.count == 0 {
-                    suggestions = suggestions + ["(thinking.)", "(thinking..)", "(thinking...)"]
-                } else {
-                    suggestions = suggestions + cloudSuggestions.prefix(3)
-                }
-            }
+//            if suggestions.count < 9 {
+//                if cloudSuggestions.count == 0 {
+//                    suggestions = suggestions + ["(thinking.)", "(thinking..)", "(thinking...)"]
+//                } else {
+//                    suggestions = suggestions + cloudSuggestions.prefix(3)
+//                }
+//            }
         }
         
         if isLatexOnly {
@@ -242,7 +242,7 @@ class InputController: IMKInputController {
         }
         
         if isIPAOnly {
-            var specified_prefixes: [String] = suggestionInput.lowercased().components(separatedBy: .whitespaces)
+            let specified_prefixes: [String] = suggestionInput.lowercased().components(separatedBy: .whitespaces)
             
             suggestions += get_matched_ipa(specified_prefixes: specified_prefixes)
         }
@@ -481,11 +481,11 @@ class InputController: IMKInputController {
                 suggestionInput += chars
                 cloudSuggestions = []
                 if !isLatexOnly {
-                    debounceTimer?.invalidate()
-                    debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: false) { [weak self] _ in
-                        self?.requestSemanticEmojis()
-                    }
-                    NSLog("Triggering semantic emojis")
+//                    debounceTimer?.invalidate()
+//                    debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: false) { [weak self] _ in
+//                        self?.requestSemanticEmojis()
+//                    }
+//                    NSLog("Triggering semantic emojis")
                 }
             } else {
                 insertText(text: chars)
